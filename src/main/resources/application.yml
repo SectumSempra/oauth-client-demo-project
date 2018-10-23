@@ -1,0 +1,41 @@
+spring:
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:h2:mem:hr;DB_CLOSE_ON_EXIT=TRUE;INIT=RUNSCRIPT FROM 'classpath:scripts/load.sql';
+    username: sa
+    password: null
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-db
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+#######################       
+auth-server: http://localhost:18085
+####################### 
+security:
+  oauth2:
+    client:
+      client-id: demo
+      client-secret: demo
+      access-token-uri: ${auth-server}/oauth/token
+      user-authorization-uri: ${auth-server}/oauth/authorize
+      authorized-grant-types: password,refresh_token,authorization_code
+      scope: demoScope
+    authorization:
+      check-token-access: permitAll()
+    resource:
+      token-info-uri: ${auth-server}/oauth/check_token
+      id: authServerResource
+#######################      
+logging:
+  level:
+    org.springframework.security: DEBUG
