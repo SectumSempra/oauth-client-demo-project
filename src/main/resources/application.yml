@@ -28,13 +28,14 @@ security:
       client-secret: demo
       access-token-uri: ${auth-server}/oauth/token
       user-authorization-uri: ${auth-server}/oauth/authorize
-      authorized-grant-types: password,refresh_token,authorization_code
+      authorized-grant-types: password,refresh_token
       scope: demoScope
     authorization:
       check-token-access: permitAll()
     resource:
       token-info-uri: ${auth-server}/oauth/check_token
       id: authServerResource
+      filter-order: 3
 #######################      
 logging:
   level:

@@ -24,14 +24,13 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableResourceServer
 public class ResourceApplication extends ResourceServerConfigurerAdapter {
-
 	@Value("${security.oauth2.resource.id}")
 	private String RESOURCE_ID;
 
 	@Autowired
 	private RedisConnectionFactory connectionFactory;
 
-	@Bean("resourceTokenStore")
+	@Bean
 	public TokenStore tokenStore() {
 		return new RedisTokenStore(connectionFactory);
 	}
