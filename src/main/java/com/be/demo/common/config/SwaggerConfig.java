@@ -34,7 +34,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Profile("local")
 public class SwaggerConfig {
-
 	@Value("${security.oauth2.client.client-id}")
 	private String clientId;
 
@@ -43,6 +42,9 @@ public class SwaggerConfig {
 
 	@Value("${security.oauth2.client.access-token-uri}")
 	private String accessTokenUri;
+
+	@Value("${security.oauth2.client.scope}")
+	private String scope;
 
 	@Bean
 	public Docket api() {
@@ -65,7 +67,6 @@ public class SwaggerConfig {
 	}
 
 	private OAuth securitySchema() {
-
 		List<AuthorizationScope> authorizationScopeList = new ArrayList<AuthorizationScope>();
 		// authorizationScopeList.add(new AuthorizationScope("read", "read
 		// all"));
@@ -73,15 +74,12 @@ public class SwaggerConfig {
 		// all"));
 		// authorizationScopeList.add(new AuthorizationScope("write", "access
 		// all"));
-		authorizationScopeList.add(new AuthorizationScope("demoScope", "Auth2 Scope Name"));
+		authorizationScopeList.add(new AuthorizationScope(scope, "Auth2 Scope Name"));
 
 		List<GrantType> grantTypes = new ArrayList<GrantType>();
 		GrantType creGrant = new ResourceOwnerPasswordCredentialsGrant(accessTokenUri);
-
 		grantTypes.add(creGrant);
-
 		return new OAuth("oauth2schema", authorizationScopeList, grantTypes);
-
 	}
 
 	private SecurityContext securityContext() {
@@ -90,14 +88,13 @@ public class SwaggerConfig {
 	}
 
 	private List<SecurityReference> defaultAuth() {
-
 		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
 		// authorizationScopes[0] = new AuthorizationScope("read", "read all");
 		// authorizationScopes[1] = new AuthorizationScope("trust", "trust
 		// all");
 		// authorizationScopes[2] = new AuthorizationScope("write", "write
 		// all");
-		authorizationScopes[0] = new AuthorizationScope("demoScope", "Auth2 Scope Name");
+		authorizationScopes[0] = new AuthorizationScope(scope, "Auth2 Scope Name");
 
 		return Collections.singletonList(new SecurityReference("oauth2schema", authorizationScopes));
 	}

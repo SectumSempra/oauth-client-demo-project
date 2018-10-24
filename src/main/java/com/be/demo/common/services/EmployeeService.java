@@ -15,6 +15,7 @@ public class EmployeeService implements IEmployeeService {
 	@Autowired
 	private EmployeeRepository ep;
 
+    @Cacheable(cacheManager = "SBRE_cacheManager", cacheNames = "employees", key = "#root.methodName", unless = "#result.size() == 0")
 	@Override
 	public List<Employee> listAll() {
 		return ep.findAll();
@@ -22,20 +23,17 @@ public class EmployeeService implements IEmployeeService {
 
 	@Override
 	public List<Employee> getByFirstName(String firstName) {
-
 		return ep.getByFirstName(firstName);
 	}
 
 	@Override
 	public List<String> getAllNames() {
 		return ep.getAllNames();
-
 	}
 
 	@Override
 	public List<Employee> getAllByDepartmentId(Integer departmentId) {
 		return ep.getByDepartmentId(departmentId);
-
 	}
 
 }

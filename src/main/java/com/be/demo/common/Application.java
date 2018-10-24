@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	@Bean("oAuth2RestTemplate")
+	@Bean("oauth2RestTemplate")
 	public OAuth2RestTemplate oauth2RestTemplate(OAuth2ClientContext oauth2ClientContext,
 			OAuth2ProtectedResourceDetails details) {
 		return new OAuth2RestTemplate(details, oauth2ClientContext);
@@ -43,4 +43,5 @@ public class Application implements CommandLineRunner {
 	public void run(String... arg0) throws Exception {
 
 	}
+
 }

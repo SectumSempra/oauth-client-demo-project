@@ -29,17 +29,7 @@ public class EmployeControllerImpl implements EmployeeController {
 	@Autowired
 	private IEmployeeService eService;
 
-//	@Autowired
-//	@Resource(name = "cacheManager")
-//	private RedisCacheManager cacheManager;
-//
-////	@Autowired
-//	// @Resource(name = "intKeyRedisTemplate")
-//	RedisTemplate<Integer, List<Employee>> intKeyRedisTemplate;
-//
-//	@Autowired
-//	@Resource(name = "intKeyRedisTemplate23")
-//	RedisTemplate<Integer, List<Employee>> redisTemplate23;
+
 
 	@Override
 	@ResponseBody
@@ -70,28 +60,7 @@ public class EmployeControllerImpl implements EmployeeController {
 	@Override
 	@ResponseBody
 	public ResponseEntity<?> stuff() {
-		// cacheable la verilen maneger(yapısı verilen redis temple) onun
-		// uzerinden işlem yaptık
-//		Cache c = cacheManager.getCache("employees");
-//		List<Employee> ll = c.get("listAll", List.class);
-//		System.err.println(ll.size());
-//
-//		Cache c2 = redisCacheManager2.getCache("employeesByDep");
-//		ValueWrapper v = c2.get(90);
-//		List<Employee> ll2 = c2.get(90, List.class);
-//		System.err.println(ll2.size());
-//
-//		// burda default olan redis tempale inject ettik,onun üstünde işlem
-//		// yaptık
-//		Boolean b1 = intKeyRedisTemplate.hasKey(90);
-//		ListOperations<Integer, List<Employee>> ofl = intKeyRedisTemplate.opsForList();
-//		List<Employee> ll3 = ofl.leftPop(33);
-//		System.err.println(ll3.size());
-//
-//		Boolean b2 = redisTemplate23.hasKey(23);
-//		ListOperations<Integer, List<Employee>> ofl23 = redisTemplate23.opsForList();
-//		List<Employee> ll23 = ofl23.leftPop(23);
-//		System.err.println(ll23.size());
+
 		return null;
 	}
 
