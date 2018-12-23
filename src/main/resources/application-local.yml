@@ -1,10 +1,53 @@
-spring:
-  jpa:
-    show-sql : true  
-    hibernate :
-     ddl-auto : none 
 server :
   port: 18084
 
-
-
+spring:
+  datasource:
+    write:
+      hikari:
+        dataSourceClassName: org.postgresql.ds.PGPoolingDataSource
+        autoCommit: false
+        username: postgres
+        password: postgres
+        poolName: hikahikaWrite
+        connection-init-sql: SELECT 2
+        connection-timeout: 30000
+        idle-timeout: 600000
+        connection-test-query: SELECT 1
+        maximum-pool-size: 13
+        auto-commit: false
+        dataSourceProperties:
+          currentSchema: public
+          databaseName: postgres
+          serverName: 127.0.0.1
+    read:
+      hikari:
+        dataSourceClassName: org.postgresql.ds.PGPoolingDataSource
+        autoCommit: false
+        username: postgres
+        password: postgres
+        poolName: hikahikaRead
+        read-only: true
+        connection-init-sql: SELECT 3
+        connection-timeout: 30000
+        idle-timeout: 600000
+        connection-test-query: SELECT 1
+        maximum-pool-size: 13
+        auto-commit: false
+        dataSourceProperties:
+          currentSchema: public
+          databaseName: postgres
+          serverName: 127.0.0.1
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect  
+    properties:
+      hibernate:
+        temp:
+         use_jdbc_metadata_defaults : false
+        jdbc:
+          lob: 
+            non_contextual_creation : true          

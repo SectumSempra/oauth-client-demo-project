@@ -20,7 +20,7 @@ public class Country implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="country_id",columnDefinition = "bpchar(2)")
+	@Column(name="country_id")
 	private String countryId;
 
 	@Column(name="country_name")
