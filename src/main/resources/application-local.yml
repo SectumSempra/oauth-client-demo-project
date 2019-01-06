@@ -5,6 +5,7 @@ spring:
      ddl-auto : none 
 server :
   port: 18084
-
-
+   
+#####################   
+auth-server: http://172.17.0.1:18085
 

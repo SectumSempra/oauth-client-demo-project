@@ -20,9 +20,6 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none
-   
-#####################   
-auth-server: http://172.17.0.1:18085
 #####################
 security:
   oauth2:
