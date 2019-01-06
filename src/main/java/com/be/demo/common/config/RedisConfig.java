@@ -3,8 +3,10 @@ package com.be.demo.common.config;
 import java.lang.reflect.Method;
 import java.time.Duration;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,23 +14,44 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.stereotype.Component;
 
 @Configuration
-@PropertySource("classpath:redis.properties")
 public class RedisConfig {
+
+	@Autowired
+	private RedisProperties redisProperties;
+
 	private String KEY_SEPERATOR = "#";
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.redis")
-	public RedisConnectionFactory redisConnectionFactory() {
-		return new JedisConnectionFactory();
+	public RedisStandaloneConfiguration redisStandaloneConfiguration() {
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+		redisStandaloneConfiguration.setDatabase(redisProperties.database);
+		redisStandaloneConfiguration.setHostName(redisProperties.host);
+		redisStandaloneConfiguration.setPort(redisProperties.port);
+		// redisStandaloneConfiguration.setPassword(RedisPassword.of(redisProperties.password));
+		return redisStandaloneConfiguration;
+	}
 
+	@Bean
+	public JedisClientConfiguration jedisClientConfiguration() {
+		JedisClientConfigurationBuilder jedisClientConfigurationBuilder = JedisClientConfiguration.builder();
+		jedisClientConfigurationBuilder.connectTimeout(Duration.ofMinutes(30));
+		JedisClientConfiguration jCCB = JedisClientConfiguration.builder().build();
+		GenericObjectPoolConfig poolConfig = jCCB.getPoolConfig().get();
+		poolConfig.setMaxIdle(redisProperties.jedisPoolMaxIdle);
+		poolConfig.setMinIdle(redisProperties.jedisPoolMinIdle);
+		return jCCB;
+	}
+
+	@Bean
+	public JedisConnectionFactory jedisConnectionFactory() {
+		return new JedisConnectionFactory(redisStandaloneConfiguration(), jedisClientConfiguration());
 	}
 
 	@Bean("SBRE_cacheConfiguration")
@@ -41,7 +64,7 @@ public class RedisConfig {
 	@Primary
 	@Bean(name = "SBRE_cacheManager")
 	public RedisCacheManager cacheManager() {
-		RedisCacheManager rcm = RedisCacheManager.builder(redisConnectionFactory()).cacheDefaults(cacheConfiguration())
+		RedisCacheManager rcm = RedisCacheManager.builder(jedisConnectionFactory()).cacheDefaults(cacheConfiguration())
 				.transactionAware().build();
 		return rcm;
 	}
@@ -67,6 +90,26 @@ public class RedisConfig {
 				return key;
 			}
 		};
+	}
+
+	@Component
+	@ConfigurationProperties
+	@PropertySource("classpath:redis.properties")
+	public class RedisProperties {
+		@Value("${spring.redis.database}")
+		private int database;
+		@Value("${spring.redis.host}")
+		private String host;
+		@Value("${spring.redis.password}")
+		private String password;
+		@Value("${spring.redis.port}")
+		private int port;
+
+		@Value("${spring.redis.jedis.pool.min-idle}")
+		private int jedisPoolMinIdle;
+		@Value("${spring.redis.jedis.pool.max-idle}")
+		private int jedisPoolMaxIdle;
+
 	}
 
 }
