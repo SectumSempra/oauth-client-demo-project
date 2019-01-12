@@ -7,6 +7,6 @@ server :
   port: 28084
    
 #####################   
-auth-server: http://172.17.0.1:28085
+auth-server: http://192.168.1.101:28085
 
 
