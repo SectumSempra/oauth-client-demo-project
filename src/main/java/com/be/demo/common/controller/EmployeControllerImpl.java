@@ -37,6 +37,7 @@ public class EmployeControllerImpl implements EmployeeController {
 	@ResponseBody
 	public ResponseEntity<?> countrylistAll() {
 		List<Country> list = countryService.listAll();
+		System.out.println(list);
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 
@@ -44,6 +45,7 @@ public class EmployeControllerImpl implements EmployeeController {
 	@ResponseBody
 	public ResponseEntity<?> listAll() {
 		List<Employee> list = eService.listAll();
+		System.out.println(list.subList(0, 10));
 		return new ResponseEntity<>(list.subList(0, 10), HttpStatus.OK);
 	}
 
