@@ -18,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.be.demo.common.model.Country;
 import com.be.demo.common.model.Employee;
+import com.be.demo.common.services.ICountryService;
 import com.be.demo.common.services.IEmployeeService;
 
 @Controller
@@ -28,8 +30,15 @@ public class EmployeControllerImpl implements EmployeeController {
 
 	@Autowired
 	private IEmployeeService eService;
+	@Autowired
+	private ICountryService countryService;
 
-
+	@Override
+	@ResponseBody
+	public ResponseEntity<?> countrylistAll() {
+		List<Country> list = countryService.listAll();
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
 
 	@Override
 	@ResponseBody
