@@ -43,9 +43,13 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.addFilterBefore(corsFilter(), ChannelProcessingFilter.class);
-		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers("/xapi/**")
-				.permitAll().antMatchers("/h2-db/**").permitAll().antMatchers("/api/**").authenticated();
+		http.csrf().disable().
+		sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+		and().
+		authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().
+		antMatchers("/xapi/**").permitAll().
+		antMatchers("/h2-db/**").permitAll().
+		anyRequest().authenticated();
 	}
 
 	/************ Cors ***********/
