@@ -25,7 +25,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<swagger-version>2.9.2</swagger-version>
-		<spring-security-oauth2-version>2.3.3.RELEASE</spring-security-oauth2-version>
+		<spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
 		<spring-security-oauth2-autoconfigur-version>2.0.9.RELEASE</spring-security-oauth2-autoconfigur-version>
 	</properties>
 
