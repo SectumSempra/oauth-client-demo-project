@@ -17,7 +17,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.6.RELEASE</version>
-		
+
 	</parent>
 
 	<properties>
@@ -25,7 +25,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<swagger-version>2.9.2</swagger-version>
-		<spring-security-oauth2-version>2.3.3.RELEASE</spring-security-oauth2-version>
+		<spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
 		<spring-security-oauth2-autoconfigur-version>2.0.9.RELEASE</spring-security-oauth2-autoconfigur-version>
 	</properties>
 
@@ -66,6 +66,12 @@
 			<version>${swagger-version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.10.2</version>
+		</dependency>
+
 		<!--e swagger -->
 		<!-- Spring data JPA, default tomcat pool, exclude it -->
 		<dependency>
@@ -78,11 +84,11 @@
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${spring-security-oauth2-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.security.oauth.boot</groupId>
-			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
-			<version>${spring-security-oauth2-autoconfigur-version}</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.security.oauth.boot</groupId> -->
+		<!-- <artifactId>spring-security-oauth2-autoconfigure</artifactId> -->
+		<!-- <version>${spring-security-oauth2-autoconfigur-version}</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -115,6 +121,26 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>2.3.3.RELEASE</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
@@ -129,17 +155,6 @@
 					<groupId>com.sun</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-
-
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
 		</dependency>
 
 		<dependency>

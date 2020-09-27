@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 @EnableConfigurationProperties
 @EnableCaching
@@ -25,23 +26,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	@Bean("oauth2RestTemplate")
-	public OAuth2RestTemplate oauth2RestTemplate(OAuth2ClientContext oauth2ClientContext,
-			OAuth2ProtectedResourceDetails details) {
-		return new OAuth2RestTemplate(details, oauth2ClientContext);
-	}
+    public static void main(String[] args) {
+	SpringApplication.run(Application.class, args);
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+    }
 
-	}
+    @Bean
+    public RestTemplate restTemplate() {
+	return new RestTemplate();
+    };
 
-	@Autowired
-	private ApplicationContext content;
+    @Autowired
+    private ApplicationContext content;
 
-	@Override
-	public void run(String... arg0) throws Exception {
+    @Override
+    public void run(String... arg0) throws Exception {
 
-	}
+    }
 
 }
