@@ -3,8 +3,8 @@ package com.be.demo.common.dto;
 import java.io.Serializable;
 import java.util.Set;
 
-public class Users implements Serializable{
-
+public class Users implements Serializable {
+    private static final long serialVersionUID = -2975858633539130735L;
     private int id;
 
     private String email;

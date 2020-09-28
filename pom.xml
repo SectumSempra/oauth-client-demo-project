@@ -16,8 +16,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.6.RELEASE</version>
-
+		<version>2.3.4.RELEASE</version>
 	</parent>
 
 	<properties>
@@ -25,8 +24,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<swagger-version>2.9.2</swagger-version>
-		<spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
-		<spring-security-oauth2-autoconfigur-version>2.0.9.RELEASE</spring-security-oauth2-autoconfigur-version>
+		<spring-security-oauth2-version>2.3.8.RELEASE</spring-security-oauth2-version>
 	</properties>
 
 	<repositories>
@@ -66,11 +64,7 @@
 			<version>${swagger-version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.10.2</version>
-		</dependency>
+
 
 		<!--e swagger -->
 		<!-- Spring data JPA, default tomcat pool, exclude it -->
@@ -84,11 +78,6 @@
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${spring-security-oauth2-version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.security.oauth.boot</groupId> -->
-		<!-- <artifactId>spring-security-oauth2-autoconfigure</artifactId> -->
-		<!-- <version>${spring-security-oauth2-autoconfigur-version}</version> -->
-		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -119,42 +108,25 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security.oauth</groupId>
-			<artifactId>spring-security-oauth2</artifactId>
-			<version>2.3.3.RELEASE</version>
-		</dependency>
-
-
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
-
 		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>tools</artifactId>
-					<groupId>com.sun</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.0.20.Final</version>
 		</dependency>
 
 		<dependency>
@@ -166,12 +138,18 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/javax.interceptor/javax.interceptor-api -->
+
 		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>1.2</version>
 		</dependency>
+
+		<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
+			<scope>runtime</scope> </dependency> <dependency> <groupId>com.zaxxer</groupId> 
+			<artifactId>HikariCP</artifactId> <exclusions> <exclusion> <artifactId>tools</artifactId> 
+			<groupId>com.sun</groupId> </exclusion> </exclusions> </dependency> -->
+
 	</dependencies>
 	<build>
 		<plugins>

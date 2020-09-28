@@ -3,8 +3,8 @@ package com.be.demo.common.config;
 import java.lang.reflect.Method;
 import java.time.Duration;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -20,7 +20,12 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
+
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 public class RedisConfig {
@@ -33,8 +38,8 @@ public class RedisConfig {
     @Bean
     public RedisStandaloneConfiguration redisStandaloneConfiguration() {
 	RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-	redisStandaloneConfiguration.setDatabase(redisProperties.database);
-	redisStandaloneConfiguration.setHostName(redisProperties.host);
+	redisStandaloneConfiguration.setDatabase(redisProperties.springDB);
+	redisStandaloneConfiguration.setHostName(redisProperties.host.trim());
 	redisStandaloneConfiguration.setPort(redisProperties.port);
 	// redisStandaloneConfiguration.setPassword(RedisPassword.of(redisProperties.password));
 	return redisStandaloneConfiguration;
@@ -44,10 +49,8 @@ public class RedisConfig {
     public JedisClientConfiguration jedisClientConfiguration() {
 	JedisClientConfigurationBuilder jedisClientConfigurationBuilder = JedisClientConfiguration.builder();
 	jedisClientConfigurationBuilder.connectTimeout(Duration.ofMinutes(30));
-	JedisClientConfiguration jCCB = JedisClientConfiguration.builder().build();
-	GenericObjectPoolConfig poolConfig = jCCB.getPoolConfig().get();
-	poolConfig.setMaxIdle(redisProperties.jedisPoolMaxIdle);
-	poolConfig.setMinIdle(redisProperties.jedisPoolMinIdle);
+	jedisClientConfigurationBuilder.usePooling().poolConfig(getPoolConfig());
+	JedisClientConfiguration jCCB = jedisClientConfigurationBuilder.build();
 	return jCCB;
     }
 
@@ -59,22 +62,20 @@ public class RedisConfig {
     @Bean(name = "redisConnectionFactory")
     public RedisConnectionFactory redisConnectionFactory() {
 	RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-	redisStandaloneConfiguration.setHostName(redisProperties.host);
+	redisStandaloneConfiguration.setHostName(redisProperties.host.trim());
 	redisStandaloneConfiguration.setPort(redisProperties.port);
-	redisStandaloneConfiguration.setDatabase(redisProperties.database);
-
+	redisStandaloneConfiguration.setDatabase(redisProperties.redisDB);
 	redisStandaloneConfiguration.setPassword(RedisPassword.of(""));
 
 	JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
-	GenericObjectPoolConfig config = getPoolConfig();
-	jedisClientConfiguration.usePooling().poolConfig(config);
-	JedisConnectionFactory jedisConFactory = new JedisConnectionFactory (redisStandaloneConfiguration);
-		//jedisClientConfiguration.build());
+	jedisClientConfiguration.usePooling().poolConfig(getPoolConfig());
+	JedisConnectionFactory jedisConFactory = new JedisConnectionFactory(redisStandaloneConfiguration,
+		jedisClientConfiguration.build());
 	return jedisConFactory;
     }
 
-    private GenericObjectPoolConfig getPoolConfig() {
-	GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+    private JedisPoolConfig getPoolConfig() {
+	JedisPoolConfig config = new JedisPoolConfig();
 	config.setMaxIdle(redisProperties.jedisPoolMaxIdle);
 	config.setMinIdle(redisProperties.jedisPoolMinIdle);
 	config.setMaxWaitMillis(redisProperties.jedisPoolMaxWait);
@@ -82,15 +83,39 @@ public class RedisConfig {
 	return config;
     }
 
-    @Bean("SBRE_cacheConfiguration")
+    @Bean
+    public RedisTemplate<Object, Object> redisTemplate(
+	    @Qualifier("jedisConnectionFactory") RedisConnectionFactory connectionFactory) {
+	RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
+	template.setKeySerializer(new StringRedisSerializer());
+	template.setHashKeySerializer(new StringRedisSerializer());
+	template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	template.setConnectionFactory(connectionFactory);
+	return template;
+
+    }
+
+    @Bean
+    public RedisTemplate<Object, Object> sessionRedisTemplate(
+	    @Qualifier("redisConnectionFactory") RedisConnectionFactory connectionFactory) {
+	RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
+	template.setKeySerializer(new StringRedisSerializer());
+	template.setHashKeySerializer(new StringRedisSerializer());
+	template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	template.setConnectionFactory(connectionFactory);
+	return template;
+
+    }
+
+    @Bean
     public RedisCacheConfiguration cacheConfiguration() {
 	RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-		.entryTtl(Duration.ofSeconds(10000)).disableCachingNullValues();
+		.entryTtl(Duration.ofSeconds(600)).disableCachingNullValues();
 	return cacheConfig;
     }
 
     @Primary
-    @Bean(name = "SBRE_cacheManager")
+    @Bean(name = "cacheManager")
     public RedisCacheManager cacheManager() {
 	RedisCacheManager rcm = RedisCacheManager.builder(jedisConnectionFactory()).cacheDefaults(cacheConfiguration())
 		.transactionAware().build();
@@ -124,8 +149,10 @@ public class RedisConfig {
     @ConfigurationProperties
     @PropertySource("classpath:redis.properties")
     public static class RedisProperties {
-	@Value("${redis.properties.database}")
-	private int database;
+	@Value("${redis.properties.redisDB}")
+	private int redisDB;
+	@Value("${redis.properties.springDB}")
+	private int springDB;
 	@Value("${redis.properties.host}")
 	private String host;
 	@Value("${redis.properties.password}")
@@ -137,6 +164,7 @@ public class RedisConfig {
 	private int jedisPoolMinIdle;
 	@Value("${redis.properties.jedis.pool.max-idle}")
 	private int jedisPoolMaxIdle;
+	@Value("${redis.properties.jedis.pool.max-active}")
 	private int jedisPoolMaxActive;
 	@Value("${redis.properties.jedis.pool.max-wait}")
 	private int jedisPoolMaxWait;

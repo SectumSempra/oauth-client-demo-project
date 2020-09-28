@@ -33,13 +33,13 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
     private RedisConnectionFactory redisConnectionFactory;
 
     @Bean
-    public TokenStore tokenStore() {
+    public TokenStore redisTokenStore() {
 	return new RedisTokenStore(redisConnectionFactory);
     }
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-	resources.tokenStore(tokenStore()).resourceId(RESOURCE_ID);
+	resources.tokenStore(redisTokenStore()).resourceId(RESOURCE_ID);
     }
 
     @Override
