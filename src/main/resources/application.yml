@@ -20,9 +20,6 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none
-   
-#####################   
-auth-server: http://localhost:18085
 #####################
 security:
   oauth2:
