@@ -4,7 +4,9 @@ spring:
     hibernate :
      ddl-auto : none  
 server :
-  port: 18094
-
+  port: 28084
+   
+#####################   
+auth-server: http://192.168.1.101:28085
 
 

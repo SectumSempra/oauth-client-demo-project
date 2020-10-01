@@ -11,22 +11,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface EmployeeController {
 
-    // -------------------Retrieve All
-    // Users---------------------------------------------
+	// -------------------Retrieve All
+	// Users---------------------------------------------
 
-    @RequestMapping(value = "/employee-list-all", method = RequestMethod.GET)
-    public ResponseEntity< ? > listAll();
+	@RequestMapping(value = "/country-list-all", method = RequestMethod.GET)
+	public ResponseEntity<?> countrylistAll();
 
-    @RequestMapping(value = "/employee-list-by-name/{name}", method = RequestMethod.GET)
-    public ResponseEntity< ? > listEmployeByName(@PathVariable("name") String name);
+	@RequestMapping(value = "/employee-list-all", method = RequestMethod.GET)
+	public ResponseEntity<?> listAll();
 
-    @RequestMapping(value = "/employee-list-all-name", method = RequestMethod.GET)
-    public ResponseEntity< ? > listAllEmployeeNames();
+	@RequestMapping(value = "/employee-list-by-name/{name}", method = RequestMethod.GET)
+	public ResponseEntity<?> listEmployeByName(@PathVariable("name") String name);
 
-    @RequestMapping(value = "/stuff", method = RequestMethod.GET)
-    public ResponseEntity< ? > stuff();
+	@RequestMapping(value = "/employee-list-all-name", method = RequestMethod.GET)
+	public ResponseEntity<?> listAllEmployeeNames();
 
-    @RequestMapping(value = "/employee-list-by-depId/{depId}", method = RequestMethod.GET)
-    public ResponseEntity< ? > listEmployeByDepId(@PathVariable("depId") Integer depId);
+	@RequestMapping(value = "/stuff", method = RequestMethod.GET)
+	public ResponseEntity<?> stuff();
+
+	@RequestMapping(value = "/employee-list-by-depId/{depId}", method = RequestMethod.GET)
+	public ResponseEntity<?> listEmployeByDepId(@PathVariable("depId") Integer depId);
 
 }

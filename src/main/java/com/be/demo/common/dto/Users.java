@@ -3,9 +3,8 @@ package com.be.demo.common.dto;
 import java.io.Serializable;
 import java.util.Set;
 
-public class Users implements Serializable{
-
-    private int id;
+public class Users implements Serializable {
+    private long id;
 
     private String email;
 
@@ -31,11 +30,11 @@ public class Users implements Serializable{
 
     }
 
-    public int getId() {
+    public long getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
 	this.id = id;
     }
 

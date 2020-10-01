@@ -28,6 +28,7 @@ public class EmployeeApiController {
 	@ResponseBody
 	@GetMapping(value = "/employeeX-list-all/", produces = MediaType.APPLICATION_XML_VALUE)
 	public List<Employee> listAll(Principal principal) {
+	    System.out.println(principal);
 		return ep.findAll();
 	}
 
