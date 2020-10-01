@@ -3,7 +3,6 @@ package com.be.demo.common.dto;
 import java.io.Serializable;
 
 public class Role implements Serializable {
-    private static final long serialVersionUID = -8388144719145840813L;
 
     private int roleId;
 

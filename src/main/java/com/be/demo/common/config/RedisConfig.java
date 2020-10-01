@@ -22,8 +22,12 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -33,31 +37,29 @@ public class RedisConfig {
     @Autowired
     private RedisProperties redisProperties;
 
-    private String KEY_SEPERATOR = "#";
-
-    @Bean
-    public RedisStandaloneConfiguration redisStandaloneConfiguration() {
-	RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-	redisStandaloneConfiguration.setDatabase(redisProperties.springDB);
-	redisStandaloneConfiguration.setHostName(redisProperties.host.trim());
-	redisStandaloneConfiguration.setPort(redisProperties.port);
-	// redisStandaloneConfiguration.setPassword(RedisPassword.of(redisProperties.password));
-	return redisStandaloneConfiguration;
-    }
-
-    @Bean
-    public JedisClientConfiguration jedisClientConfiguration() {
-	JedisClientConfigurationBuilder jedisClientConfigurationBuilder = JedisClientConfiguration.builder();
-	jedisClientConfigurationBuilder.connectTimeout(Duration.ofMinutes(30));
-	jedisClientConfigurationBuilder.usePooling().poolConfig(getPoolConfig());
-	JedisClientConfiguration jCCB = jedisClientConfigurationBuilder.build();
-	return jCCB;
-    }
-
-    @Bean("jedisConnectionFactory")
-    public JedisConnectionFactory jedisConnectionFactory() {
-	return new JedisConnectionFactory(redisStandaloneConfiguration(), jedisClientConfiguration());
-    }
+//    private String KEY_SEPERATOR = "#";
+//
+//    private RedisStandaloneConfiguration redisStandaloneConfiguration() {
+//	RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+//	redisStandaloneConfiguration.setDatabase(redisProperties.springDB);
+//	redisStandaloneConfiguration.setHostName(redisProperties.host.trim());
+//	redisStandaloneConfiguration.setPort(redisProperties.port);
+//	// redisStandaloneConfiguration.setPassword(RedisPassword.of(redisProperties.password));
+//	return redisStandaloneConfiguration;
+//    }
+//
+//    private JedisClientConfiguration jedisClientConfiguration() {
+//	JedisClientConfigurationBuilder jedisClientConfigurationBuilder = JedisClientConfiguration.builder();
+//	jedisClientConfigurationBuilder.connectTimeout(Duration.ofMinutes(30));
+//	jedisClientConfigurationBuilder.usePooling().poolConfig(getPoolConfig());
+//	JedisClientConfiguration jCCB = jedisClientConfigurationBuilder.build();
+//	return jCCB;
+//    }
+//
+//    @Bean("jedisConnectionFactory")
+//    public JedisConnectionFactory jedisConnectionFactory() {
+//	return new JedisConnectionFactory(redisStandaloneConfiguration(), jedisClientConfiguration());
+//    }
 
     @Bean(name = "redisConnectionFactory")
     public RedisConnectionFactory redisConnectionFactory() {
@@ -84,66 +86,73 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(
-	    @Qualifier("jedisConnectionFactory") RedisConnectionFactory connectionFactory) {
-	RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
-	template.setKeySerializer(new StringRedisSerializer());
-	template.setHashKeySerializer(new StringRedisSerializer());
-	template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-	template.setConnectionFactory(connectionFactory);
-	return template;
-
-    }
-
-    @Bean
-    public RedisTemplate<Object, Object> sessionRedisTemplate(
-	    @Qualifier("redisConnectionFactory") RedisConnectionFactory connectionFactory) {
-	RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
-	template.setKeySerializer(new StringRedisSerializer());
-	template.setHashKeySerializer(new StringRedisSerializer());
-	template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-	template.setConnectionFactory(connectionFactory);
-	return template;
-
-    }
-
-    @Bean
-    public RedisCacheConfiguration cacheConfiguration() {
-	RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-		.entryTtl(Duration.ofSeconds(600)).disableCachingNullValues();
-	return cacheConfig;
+    @Primary
+    public RedisCacheConfiguration defaultCacheConfig(ObjectMapper objectMapper) {
+	return RedisCacheConfiguration.defaultCacheConfig()
+		.serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer())).serializeValuesWith(
+			SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
     }
 
     @Primary
-    @Bean(name = "cacheManager")
-    public RedisCacheManager cacheManager() {
-	RedisCacheManager rcm = RedisCacheManager.builder(jedisConnectionFactory()).cacheDefaults(cacheConfiguration())
-		.transactionAware().build();
-	return rcm;
+    @Bean("redisTemplate")
+    public RedisTemplate<String, String> redisTemplate(@Qualifier("redisConnectionFactory") RedisConnectionFactory cf) {
+	RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+	redisTemplate.setConnectionFactory(cf);
+	redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+	redisTemplate.setStringSerializer(new StringRedisSerializer());
+	return redisTemplate;
     }
 
-    @Bean(name = "keyGenerator1")
-    public KeyGenerator keyGenerator() {
-	return new KeyGenerator() {
-	    @Override
-	    public Object generate(Object target, Method method, Object... params) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(target.getClass().getSimpleName());
-		sb.append(KEY_SEPERATOR);
-		sb.append(method.getName());
-		sb.append(KEY_SEPERATOR);
-		for (Object param : params) {
-		    sb.append(param.toString());
-		    sb.append(KEY_SEPERATOR);
-		}
-		String str = sb.toString();
-		String key = str.substring(0, str.length() - 1);
-		System.out.println(key);
-
-		return key;
-	    }
-	};
+    @Primary
+    @Bean("redisTemplateObject")
+    public RedisTemplate<Object, Object> redisTemplateObject(
+	    @Qualifier("redisConnectionFactory") RedisConnectionFactory cf) {
+	RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+	redisTemplate.setConnectionFactory(cf);
+	redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+	redisTemplate.setStringSerializer(new StringRedisSerializer());
+	return redisTemplate;
     }
+
+//    @Bean
+//    public RedisCacheConfiguration cacheConfiguration() {
+//	RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+//		.entryTtl(Duration.ofSeconds(600)).disableCachingNullValues();
+//	return cacheConfig;
+//    }
+//
+//    @Primary
+//    @Bean(name = "cacheManager")
+//    public RedisCacheManager cacheManager() {
+//	RedisCacheManager rcm = RedisCacheManager.builder(jedisConnectionFactory()).cacheDefaults(cacheConfiguration())
+//		.transactionAware().build();
+//	return rcm;
+//    }
+//
+//    @Bean(name = "keyGenerator1")
+//    public KeyGenerator keyGenerator() {
+//	return new KeyGenerator() {
+//	    @Override
+//	    public Object generate(Object target, Method method, Object... params) {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(target.getClass().getSimpleName());
+//		sb.append(KEY_SEPERATOR);
+//		sb.append(method.getName());
+//		sb.append(KEY_SEPERATOR);
+//		for (Object param : params) {
+//		    sb.append(param.toString());
+//		    sb.append(KEY_SEPERATOR);
+//		}
+//		String str = sb.toString();
+//		String key = str.substring(0, str.length() - 1);
+//		System.out.println(key);
+//
+//		return key;
+//	    }
+//	};
+//    }
 
     @Component
     @ConfigurationProperties
