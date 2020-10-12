@@ -6,12 +6,14 @@ import com.be.demo.common.model.Employee;
 
 public interface IEmployeeService {
 
-    public List<Employee> listAll();
+	public List<Employee> listAll();
 
-    public List<Employee> getByFirstName(String firstName);
+	public List<Employee> getByFirstName(String firstName);
 
-    public List<String> getAllNames();
+	public List<String> getAllNames();
 
-    public List<Employee> getAllByDepartmentId(Integer departmentId);
+	public List<Employee> getAllByDepartmentId(Integer departmentId);
+
+	public void save(Employee emp);
 
 }

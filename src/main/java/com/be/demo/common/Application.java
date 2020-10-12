@@ -15,31 +15,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 @EnableConfigurationProperties
-//@EnableCaching
 @EnableJpaRepositories("com.be.demo.common.repository")
 @EntityScan("com.be.demo.common.model")
 @EnableTransactionManagement
+@EnableCaching
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    public static void main(String[] args) {
-	SpringApplication.run(Application.class, args);
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
 
-    }
+	}
 
-    @Bean
-    public RestTemplate restTemplate() {
-	return new RestTemplate();
-    };
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	};
 
-    @Autowired
-    @Qualifier("redisTemplate")
-    RedisTemplate<String, String> redisTemplate;
+	@Autowired
+	@Qualifier("redisTemplateV2")
+	RedisTemplate<String, String> redisTemplateV2;
 
-    @Override
-    public void run(String... arg0) throws Exception {
-	System.err.println(redisTemplate.opsForValue().get("A"));
-	System.err.println("cc runner end");
-    }
+	@Override
+	public void run(String... arg0) throws Exception {
+		System.err.println(redisTemplateV2.opsForValue().get("A"));
+		System.err.println("cc runner end");
+	}
 
 }
