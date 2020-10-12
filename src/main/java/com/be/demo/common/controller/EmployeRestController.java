@@ -5,51 +5,47 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.be.demo.common.model.Employee;
 import com.be.demo.common.services.IEmployeeService;
 
 @RestController
-public class EmployeControllerImpl implements EmployeeController {
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+public class EmployeRestController {
 
-	public static final Logger logger = LoggerFactory.getLogger(EmployeControllerImpl.class);
+	public static final Logger logger = LoggerFactory.getLogger(EmployeRestController.class);
 
 	@Autowired
 	private IEmployeeService eService;
 
-	@Override
+	@GetMapping(value = "/employee-list-all")
 	public ResponseEntity<?> listAll() {
 		List<Employee> list = eService.listAll();
-		return new ResponseEntity<>(list.subList(0, 10), HttpStatus.OK);
+		return ResponseEntity.ok(list);
 	}
 
-	@Override
+	@GetMapping(value = "/employee-list-by-depId/{depId}")
 	public ResponseEntity<?> listEmployeByDepId(@PathVariable("depId") Integer depId) {
 		List<Employee> list = eService.getAllByDepartmentId(depId);
-		return new ResponseEntity<>(list, HttpStatus.OK);
+		return ResponseEntity.ok(list);
 	}
 
-	@Override
+	@GetMapping(value = "/employee-list-all-name")
 	public ResponseEntity<?> listAllEmployeeNames() {
 		List<String> list = eService.getAllNames();
-		return new ResponseEntity<>(list.toArray(new String[list.size()]), HttpStatus.OK);
+		return ResponseEntity.ok(list);
 	}
 
-	@Override
+	@GetMapping(value = "/employee-list-by-name/{name}")
 	public ResponseEntity<?> listEmployeByName(@PathVariable("name") String name) {
 		List<Employee> list = eService.getByFirstName(name);
-		return new ResponseEntity<>(list, HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<?> stuff() {
-
-		return null;
+		return ResponseEntity.ok(list);
 	}
 
 }

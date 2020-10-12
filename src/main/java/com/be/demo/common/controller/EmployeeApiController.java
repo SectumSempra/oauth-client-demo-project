@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.be.demo.common.model.Employee;
@@ -25,20 +24,17 @@ public class EmployeeApiController {
 	@Autowired
 	EmployeeRepository ep;
 
-	@ResponseBody
 	@GetMapping(value = "/employeeX-list-all/", produces = MediaType.APPLICATION_XML_VALUE)
 	public List<Employee> listAll(Principal principal) {
-	    System.out.println(principal);
+		System.out.println(principal);
 		return ep.findAll();
 	}
 
-	@ResponseBody
 	@GetMapping(value = "/employeeX-list-by-name/{name}", produces = MediaType.APPLICATION_XML_VALUE)
 	public List<Employee> listEmployeByName(Principal principal, @PathVariable("name") String name) {
 		return ep.getByFirstName(name);
 	}
 
-	@ResponseBody
 	@GetMapping(value = "/employeeX-list-all-name", produces = MediaType.APPLICATION_XML_VALUE)
 	public List<String> listAllEmployeeNames(Principal principal) {
 		return ep.getAllNames();

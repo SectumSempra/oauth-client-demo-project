@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.be.demo.common.cahce.DemoCacheUtils;
+import com.be.demo.common.cahce.MyCacheUtils;
 import com.be.demo.common.model.Employee;
 import com.be.demo.common.repository.EmployeeRepository;
 
@@ -16,7 +16,7 @@ public class EmployeeService implements IEmployeeService {
 	@Autowired
 	private EmployeeRepository ep;
 
-	@Cacheable(cacheNames = DemoCacheUtils.CN_EMPLOYEE, cacheManager = DemoCacheUtils.CN_CACHEMANAGER, keyGenerator = "keyGeneratorV2")
+	@Cacheable(cacheNames = MyCacheUtils.CN_EMPLOYEE, cacheManager = MyCacheUtils.CN_CACHEMANAGER, keyGenerator = "keyGeneratorV2")
 	@Override
 	public List<Employee> listAll() {
 		return ep.findAll();
