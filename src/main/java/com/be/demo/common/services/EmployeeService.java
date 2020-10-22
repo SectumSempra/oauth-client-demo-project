@@ -13,33 +13,33 @@ import com.be.demo.common.repository.EmployeeRepository;
 @Service
 public class EmployeeService implements IEmployeeService {
 
-	@Autowired
-	private EmployeeRepository ep;
+    @Autowired
+    private EmployeeRepository ep;
 
-	@Cacheable(cacheNames = MyCacheUtils.CN_EMPLOYEE, cacheManager = MyCacheUtils.CN_CACHEMANAGER, keyGenerator = "keyGeneratorV2")
-	@Override
-	public List<Employee> listAll() {
-		return ep.findAll();
-	}
+    @Cacheable(cacheNames = MyCacheUtils.CN_EMPLOYEE, cacheManager = MyCacheUtils.CacheBeans.CACHE_MANAGER, keyGenerator = MyCacheUtils.CacheBeans.KEY_GENERATOR)
+    @Override
+    public List<Employee> listAll() {
+	return ep.findAll();
+    }
 
-	@Override
-	public List<Employee> getByFirstName(String firstName) {
-		return ep.getByFirstName(firstName);
-	}
+    @Override
+    public List<Employee> getByFirstName(String firstName) {
+	return ep.getByFirstName(firstName);
+    }
 
-	@Override
-	public List<String> getAllNames() {
-		return ep.getAllNames();
-	}
+    @Override
+    public List<String> getAllNames() {
+	return ep.getAllNames();
+    }
 
-	@Override
-	public List<Employee> getAllByDepartmentId(Integer departmentId) {
-		return ep.getByDepartmentId(departmentId);
-	}
+    @Override
+    public List<Employee> getAllByDepartmentId(Integer departmentId) {
+	return ep.getByDepartmentId(departmentId);
+    }
 
-	@Override
-	public void save(Employee emp) {
-		ep.save(emp);
-	}
+    @Override
+    public void save(Employee emp) {
+	ep.save(emp);
+    }
 
 }

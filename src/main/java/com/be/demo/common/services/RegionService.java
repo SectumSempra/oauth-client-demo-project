@@ -14,17 +14,17 @@ import com.be.demo.common.repository.RegionRepository;
 @Service
 public class RegionService {
 
-	@Autowired
-	private RegionRepository regionRepository;
+    @Autowired
+    private RegionRepository regionRepository;
 
-	@Cacheable(cacheNames = MyCacheUtils.CN_REGION, cacheManager = MyCacheUtils.CN_CACHEMANAGER, keyGenerator = "keyGeneratorV2")
-	public List<Region> listAll() {
-		return regionRepository.findAll();
-	}
+    @Cacheable(cacheNames = MyCacheUtils.CN_REGION, cacheManager = MyCacheUtils.CacheBeans.CACHE_MANAGER, keyGenerator = MyCacheUtils.CacheBeans.KEY_GENERATOR)
+    public List<Region> listAll() {
+	return regionRepository.findAll();
+    }
 
-	@CacheEvict(cacheNames = MyCacheUtils.CN_REGION, allEntries = true)
-	public void save(Region r) {
-		regionRepository.save(r);
-	}
+    @CacheEvict(cacheNames = MyCacheUtils.CN_REGION, allEntries = true)
+    public void save(Region r) {
+	regionRepository.save(r);
+    }
 
 }

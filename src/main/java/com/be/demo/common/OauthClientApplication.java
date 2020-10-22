@@ -1,7 +1,5 @@
 package com.be.demo.common;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +8,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,26 +17,21 @@ import org.springframework.web.client.RestTemplate;
 @EnableTransactionManagement
 @EnableCaching
 @SpringBootApplication
-public class Application implements CommandLineRunner {
+public class OauthClientApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+    @Bean
+    public RestTemplate restTemplate() {
+	return new RestTemplate();
+    };
 
-	}
+    public static void main(String[] args) {
+	SpringApplication.run(OauthClientApplication.class, args);
 
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	};
+    }
 
-	@Autowired
-	@Qualifier("redisTemplateV2")
-	RedisTemplate<String, String> redisTemplateV2;
+    @Override
+    public void run(String... arg0) throws Exception {
 
-	@Override
-	public void run(String... arg0) throws Exception {
-		System.err.println(redisTemplateV2.opsForValue().get("A"));
-		System.err.println("cc runner end");
-	}
+    }
 
 }

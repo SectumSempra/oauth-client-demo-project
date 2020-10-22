@@ -24,10 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.be.demo.common.Application;
+import com.be.demo.common.OauthClientApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { Application.class})
+@SpringBootTest(classes = { OauthClientApplication.class})
 @EnableTransactionManagement
 @Transactional
 @Rollback(true)

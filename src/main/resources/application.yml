@@ -48,9 +48,12 @@ logging:
 session:
   cookie:
     name: UISESSION
-    
+ ###########################       
 server:
   tomcat:
     accesslog: 
       enabled : true
-    
+###########################    
+app-config:
+  caches:
+    test : 60        

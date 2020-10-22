@@ -26,36 +26,36 @@ import com.be.demo.common.services.RegionService;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RegionRestController {
 
-	public static final Logger logger = LoggerFactory.getLogger(RegionRestController.class);
+    public static final Logger logger = LoggerFactory.getLogger(RegionRestController.class);
 
-	@Autowired
-	RegionService regionService;
+    @Autowired
+    RegionService regionService;
 
-	@Autowired
-	@Qualifier(MyCacheUtils.CN_CACHEMANAGER)
-	RedisCacheManager redisCacheManager;
+    @Autowired
+    @Qualifier(MyCacheUtils.CacheBeans.CACHE_MANAGER)
+    RedisCacheManager redisCacheManager;
 
-	@GetMapping(value = "/get-all-regions")
-	public ResponseEntity<?> getAllRegions() {
-		List<Region> list = regionService.listAll();
-		return ResponseEntity.ok(list);
-	}
+    @GetMapping(value = "/get-all-regions")
+    public ResponseEntity<?> getAllRegions() {
+	List<Region> list = regionService.listAll();
+	return ResponseEntity.ok(list);
+    }
 
-	@GetMapping(value = "/get-all-regions-manually")
-	@CacheTTL(ttlMinutes = 5)
-	public ResponseEntity<?> getAllRegionsManually() {
-		/*
-		 * Cache cache = redisCacheManager.getCache(MyCacheUtils.CN_REGION);
-		 * ValueWrapper svw = cache.get("RegionService#listAll"); List<Region> list =
-		 * (List<Region>) svw.get()
-		 */ ;
-		List<Region> list = regionService.listAll();
-		return ResponseEntity.ok(list.get(0));
-	}
+    @GetMapping(value = "/get-all-regions-manually")
+    @CacheTTL(ttlMinutes = 5)
+    public ResponseEntity<?> getAllRegionsManually() {
+	/*
+	 * Cache cache = redisCacheManager.getCache(MyCacheUtils.CN_REGION);
+	 * ValueWrapper svw = cache.get("RegionService#listAll"); List<Region> list =
+	 * (List<Region>) svw.get()
+	 */ ;
+	List<Region> list = regionService.listAll();
+	return ResponseEntity.ok(list.get(0));
+    }
 
-	@PostMapping(value = "/create-region")
-	public ResponseEntity<?> createRegion(@RequestBody Region r) {
-		regionService.save(r);
-		return ResponseEntity.ok(r);
-	}
+    @PostMapping(value = "/create-region")
+    public ResponseEntity<?> createRegion(@RequestBody Region r) {
+	regionService.save(r);
+	return ResponseEntity.ok(r);
+    }
 }
