@@ -1,11 +1,14 @@
 package com.be.demo.common.controller;
 
-import java.security.Principal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.be.demo.common.dto.Users;
-
 
 //@EnableOAuth2Sso
 @Controller
@@ -27,34 +29,39 @@ public class UserApiController {
     @Value("${auth-server}")
     String authServer;
 
-    @Autowired
-    RestTemplate restTemplate;
-
-    @RequestMapping(value = "/principal")
-    @ResponseBody
-    public Principal user(Principal user) {
-        return user;
-    }
-
     @RequestMapping(value = "/currentUser", method = RequestMethod.GET)
     @ResponseBody
     Users getUser() {
-        Users users = restTemplate.getForObject(userInfoUri, Users.class);
-        return users;
-    }
+	RestTemplate restTemplate = new RestTemplate();
+	HttpHeaders headers = new HttpHeaders();
+	OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext()
+		.getAuthentication().getDetails();
+	headers.set("Authorization", "Bearer " + details.getTokenValue()); // accessToken can be the secret key you
+									   // generate.
+	headers.setContentType(MediaType.APPLICATION_JSON);
+	HttpEntity<String> entity = new HttpEntity<>(headers);
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    @ResponseBody
-    String getHello(Principal user) {
-        return "Hello 84 " + user.getName();
+	Users users = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Users.class).getBody();
+	return users;
     }
 
     @RequestMapping(value = "/newuser", method = RequestMethod.POST)
     @ResponseBody
     ResponseEntity<Users> createNewUser(@RequestBody Users newUser) {
-        String uri2 = authServer + "/user/create";
-        ResponseEntity<Users> users = restTemplate.postForEntity(uri2, newUser, Users.class);
-        return users;
+
+	RestTemplate restTemplate = new RestTemplate();
+	HttpHeaders headers = new HttpHeaders();
+	OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext()
+		.getAuthentication().getDetails();
+	headers.set("Authorization", "Bearer " + details.getTokenValue()); // accessToken can be the secret key you
+									   // generate.
+	headers.setContentType(MediaType.APPLICATION_JSON);
+	HttpEntity<Users> entity = new HttpEntity<>(newUser,headers);
+
+	String urlUserCreate = authServer + "/api/user/create";
+	ResponseEntity<Users> users = restTemplate.exchange(urlUserCreate, HttpMethod.POST, entity, Users.class);
+
+	return users;
     }
 
 }
